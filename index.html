@@ -3,68 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="休んでも、また戻れる英単語学習アプリ" />
-    <title>もどり英語</title>
+    <meta http-equiv="refresh" content="0; url=https://modori-eigo-habit.yuuyuu.chatgpt.site" />
+    <title>もどり英語を開く</title>
     <style>
-      :root { --ink:#29263c; --muted:#7a7686; --purple:#6e62b6; --cream:#f7f4ed; --paper:#fffdf9; --line:#e7e2da; }
-      * { box-sizing:border-box; }
-      body { margin:0; background:var(--cream); color:var(--ink); font-family:"Hiragino Sans","Yu Gothic UI","Yu Gothic",sans-serif; }
-      button { font:inherit; } button:focus-visible { outline:3px solid #c9c2e8; outline-offset:3px; }
-      header { height:72px; display:flex; align-items:center; justify-content:space-between; padding:0 max(24px,calc((100vw - 960px)/2)); border-bottom:1px solid #2d29440d; background:#f7f4ede8; }
-      .brand { display:flex; align-items:center; gap:11px; color:var(--ink); font-weight:800; text-decoration:none; }
-      .brand-mark { width:34px; height:34px; display:grid; place-items:center; border-radius:11px 11px 11px 4px; background:var(--purple); color:#fff; font:italic 22px Georgia,serif; }
-      header p { color:var(--muted); font-size:11px; }
-      main { width:min(960px,calc(100% - 40px)); margin:auto; padding-bottom:70px; }
-      .hero { min-height:390px; display:grid; grid-template-columns:1.1fr .9fr; align-items:center; gap:40px; padding:48px 36px 32px; }
-      .eyebrow { display:flex; align-items:center; gap:10px; margin:0 0 12px; color:var(--purple); font-size:10px; font-weight:800; letter-spacing:.2em; }
-      .eyebrow::before { content:""; width:28px; height:1px; background:var(--purple); }
-      h1 { margin:0; font:500 clamp(52px,7vw,78px)/1.08 "Yu Mincho","Hiragino Mincho ProN",serif; letter-spacing:-.06em; }
-      h1 em { color:var(--purple); font-style:normal; } .hero .lead { margin:24px 0 0; color:var(--muted); font-size:13px; line-height:2; }
-      .orbit { position:relative; width:min(320px,100%); aspect-ratio:1; margin-left:auto; border:1px solid #dcd5ee; border-radius:50%; }
-      .orbit::before { content:""; position:absolute; inset:18%; border:1px dashed #d8d1e7; border-radius:50%; }
-      .orbit strong { position:absolute; inset:31%; display:grid; place-items:center; border-radius:50%; background:var(--purple); color:#fff; box-shadow:0 18px 40px #4f43803d; font-size:44px; }
-      .token { position:absolute; z-index:2; width:50px; height:50px; display:grid; place-items:center; border-radius:50%; background:var(--paper); box-shadow:0 8px 26px #38305e18; color:#4d427e; font:italic 17px Georgia,serif; }
-      .token.a { top:5%; left:16%; } .token.hello { top:37%; right:-3%; width:62px; height:62px; background:#e9e4f8; font-size:12px; } .token.two { bottom:3%; left:19%; background:#f8ded0; color:#b35d53; }
-      .study { display:grid; grid-template-columns:.9fr 1.1fr; gap:18px; padding:18px; border:1px solid var(--line); border-radius:25px; background:#fffdf9b8; box-shadow:0 18px 60px #312b4b0a; }
-      .choose { padding:24px 20px; } .kicker { margin:0 0 11px; color:var(--purple); font-size:10px; font-weight:800; letter-spacing:.18em; }
-      h2 { margin:0; font:600 23px "Yu Mincho","Hiragino Mincho ProN",serif; }
-      .moods { display:grid; gap:9px; margin-top:24px; } .mood { display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:center; min-height:64px; padding:11px 14px; border:1px solid var(--line); border-radius:15px; background:#fff; color:var(--ink); cursor:pointer; text-align:left; transition:.16s ease; }
-      .mood:hover { transform:translateX(3px); border-color:#c9c2e6; } .mood.active { border-color:var(--purple); background:#f5f2ff; box-shadow:inset 0 0 0 1px var(--purple); }
-      .face { width:32px; height:32px; border-radius:50%; background:#c9c1ee; } .face.good { background:#f2c8a5; } .face.tired { background:#b9d8ce; } .mood b,.mood small { display:block; } .mood b { margin-bottom:4px; font-size:13px; } .mood small { color:var(--muted); font-size:9px; }
-      .card { display:flex; flex-direction:column; min-height:430px; padding:28px; border-radius:20px; background:var(--purple); color:#fff; box-shadow:0 18px 44px #4c407e30; }
-      .card-head { display:flex; justify-content:space-between; align-items:center; } .card .kicker { color:#dcd7f6; } .count { padding:6px 10px; border-radius:999px; background:#ffffff1f; color:#eae7f8; font-size:10px; }
-      .word { margin:auto 0 18px; } .word strong { display:block; font:600 clamp(35px,5vw,51px) Georgia,serif; } .word span { color:#d3cee9; font-size:12px; }
-      .answer { min-height:84px; padding:18px; border:1px solid #ffffff2e; border-radius:14px; background:#ffffff12; } .answer p { margin:0; color:#d7d2e8; font-size:11px; line-height:1.7; } .answer b,.answer small { display:block; } .answer b { font-size:15px; } .answer small { margin-top:9px; color:#d7d2e8; font:12px Georgia,serif; }
-      .actions { display:grid; grid-template-columns:1fr 1.2fr; gap:10px; margin-top:14px; } .actions button { min-height:46px; border-radius:999px; font-size:11px; font-weight:800; cursor:pointer; } .secondary { border:1px solid #ffffff4a; background:transparent; color:#fff; } .primary { border:0; background:#fff; color:#4d427e; }
-      .note { margin:22px 0 0; color:var(--muted); font-size:11px; text-align:center; } .note span { color:var(--purple); font-size:17px; }
-      footer { min-height:100px; display:flex; align-items:center; justify-content:center; gap:22px; padding:20px; border-top:1px solid var(--line); background:#f1eee7; } footer p { margin:0; color:var(--muted); font-size:10px; }
-      @media(max-width:760px) { header p { display:none; } main { width:min(100% - 28px,560px); } .hero { min-height:540px; grid-template-columns:1fr; gap:10px; padding:48px 8px 28px; } h1 { font-size:55px; } .orbit { width:250px; margin:0 auto; } .study { grid-template-columns:1fr; padding:10px; } .choose { padding:20px 12px 12px; } .moods { grid-template-columns:repeat(3,1fr); gap:6px; } .mood { grid-template-columns:1fr; justify-items:center; padding:10px 5px; text-align:center; } .card { min-height:390px; padding:24px 20px; } footer { justify-content:flex-start; flex-wrap:wrap; } }
+      body { min-height: 100vh; display: grid; place-items: center; margin: 0; background: #f7f4ed; color: #29263c; font-family: "Yu Gothic", sans-serif; }
+      main { padding: 32px; text-align: center; }
+      a { display: inline-block; margin-top: 14px; padding: 12px 20px; border-radius: 999px; background: #6e62b6; color: white; font-weight: 700; text-decoration: none; }
     </style>
   </head>
   <body>
-    <header><a class="brand" href="#top"><span class="brand-mark">m</span><span>もどり英語</span></a><p>休んでも、また戻れば大丈夫。</p></header>
-    <main id="top">
-      <section class="hero">
-        <div><p class="eyebrow">WELCOME BACK</p><h1>今日も、<br><em>ここから。</em></h1><p class="lead">気分に合わせて、英単語を少しだけ。<br>覚えられなくても大丈夫です。</p></div>
-        <div class="orbit" aria-hidden="true"><i class="token a">A</i><i class="token hello">hello</i><i class="token two">2</i><strong>↩</strong></div>
-      </section>
-      <section class="study">
-        <div class="choose"><p class="kicker">STEP 1</p><h2>いまの気分を選ぶ</h2><div class="moods" id="moods"></div></div>
-        <article class="card"><div class="card-head"><div><p class="kicker">STEP 2</p><h2 id="today">今日は5語</h2></div><span class="count" id="position">1 / 12</span></div><div class="word"><strong id="word">accomplish</strong><span id="pronunciation">/əˈkɑːmplɪʃ/</span></div><div class="answer" id="answer"><p>まず英単語を見て、意味を考えてみましょう。</p></div><div class="actions"><button class="secondary" id="meaning">意味を見る</button><button class="primary" id="next">次の単語 →</button></div></article>
-      </section>
-      <p class="note"><span>↩</span> 今日はここまででも大丈夫。また開けば、そこが続きです。</p>
-    </main>
-    <footer><a class="brand" href="#top"><span class="brand-mark">m</span><span>もどり英語</span></a><p>英語学習に、戻れる場所を。</p></footer>
-    <script>
-      const moods=[['good','元気','10語やってみる',10],['okay','ふつう','5語だけ進める',5],['tired','疲れた','1語だけ見る',1]];
-      const words=[['accomplish','/əˈkɑːmplɪʃ/','達成する、成し遂げる','We accomplished our goal.'],['approach','/əˈproʊtʃ/','近づく、取り組み方','We need a new approach.'],['benefit','/ˈbenɪfɪt/','利益、恩恵を受ける','Exercise benefits your health.'],['contribute','/kənˈtrɪbjuːt/','貢献する、寄付する','Everyone can contribute.'],['decline','/dɪˈklaɪn/','減少する、断る','The number began to decline.'],['essential','/ɪˈsenʃəl/','必要不可欠な','Water is essential for life.'],['feature','/ˈfiːtʃər/','特徴、特集する','The app has a useful feature.'],['maintain','/meɪnˈteɪn/','維持する、主張する','It is hard to maintain focus.'],['opportunity','/ˌɑːpərˈtuːnəti/','機会、好機','This is a great opportunity.'],['require','/rɪˈkwaɪər/','必要とする、要求する','The job requires patience.'],['significant','/sɪɡˈnɪfɪkənt/','重要な、かなりの','We made significant progress.'],['variety','/vəˈraɪəti/','多様性、さまざまな種類','The shop sells a variety of books.']];
-      let mood='okay', index=0, open=false;
-      const moodRoot=document.querySelector('#moods'), word=document.querySelector('#word'), pronunciation=document.querySelector('#pronunciation'), answer=document.querySelector('#answer'), position=document.querySelector('#position'), today=document.querySelector('#today'), meaning=document.querySelector('#meaning');
-      function renderMoods(){ moodRoot.innerHTML=moods.map(([id,label,note])=>`<button class="mood ${id===mood?'active':''}" data-id="${id}"><span class="face ${id}"></span><span><b>${label}</b><small>${note}</small></span></button>`).join(''); moodRoot.querySelectorAll('button').forEach(button=>button.onclick=()=>{ mood=button.dataset.id; render(); }); }
-      function render(){ const current=words[index], selected=moods.find(item=>item[0]===mood); word.textContent=current[0]; pronunciation.textContent=current[1]; position.textContent=`${index+1} / ${words.length}`; today.textContent=`今日は${selected[3]}語`; answer.innerHTML=open?`<b>${current[2]}</b><small>${current[3]}</small>`:'<p>まず英単語を見て、意味を考えてみましょう。</p>'; meaning.textContent=open?'意味を隠す':'意味を見る'; renderMoods(); }
-      document.querySelector('#meaning').onclick=()=>{ open=!open; render(); };
-      document.querySelector('#next').onclick=()=>{ index=(index+1)%words.length; open=false; render(); };
-      render();
-    </script>
+    <main><h1>もどり英語</h1><p>単語アプリを開いています。</p><a href="https://modori-eigo-habit.yuuyuu.chatgpt.site">開かない場合はこちら</a></main>
   </body>
 </html>
