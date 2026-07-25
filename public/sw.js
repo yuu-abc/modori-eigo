@@ -1,8 +1,9 @@
-const CACHE_NAME = "modori-eigo-v2";
+
 const SHELL_URLS = [
   "/",
   "/manifest.webmanifest",
   "/app-icon.svg",
+
 ];
 
 async function cacheAppShell() {
@@ -24,7 +25,7 @@ async function cacheAppShell() {
     assetUrls.add(match[1]);
   }
 
-  await cache.addAll([...assetUrls]);
+
 }
 
 self.addEventListener("install", (event) => {
@@ -39,6 +40,7 @@ self.addEventListener("activate", (event) => {
       .then(() => self.clients.claim()),
   );
 });
+
 
 self.addEventListener("fetch", (event) => {
   const { request } = event;

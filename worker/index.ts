@@ -1,6 +1,7 @@
 /** Cloudflare Worker entry point for the vinext-starter template. */
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
+import { appIconPngBase64 } from "./app-icons";
 
 interface Env {
   ASSETS: Fetcher;
@@ -28,6 +29,17 @@ interface ExecutionContext {
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+
+    const appIcon = appIconPngBase64[url.pathname];
+    if (appIcon) {
+      const bytes = Uint8Array.from(atob(appIcon), (character) => character.charCodeAt(0));
+      return new Response(bytes, {
+        headers: {
+          "cache-control": "public, max-age=31536000, immutable",
+          "content-type": "image/png",
+        },
+      });
+    }
 
     if (url.pathname === "/_vinext/image") {
       const allowedWidths = [...DEFAULT_DEVICE_SIZES, ...DEFAULT_IMAGE_SIZES];

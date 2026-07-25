@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     title: "もどり英語",
   },
   icons: {
-    icon: [{ url: "/app-icon.svg", type: "image/svg+xml", sizes: "any" }],
+
   },
   openGraph: {
     title: "もどり英語",

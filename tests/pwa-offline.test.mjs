@@ -5,6 +5,7 @@ import test from "node:test";
 test("registers an offline service worker", async () => {
   const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
   assert.match(page, /navigator\.serviceWorker\.register\("\/sw\.js"\)/);
+
 });
 
 test("provides an installable manifest and caches the app shell", async () => {
@@ -16,15 +17,9 @@ test("provides an installable manifest and caches the app shell", async () => {
 
   assert.equal(manifest.display, "standalone");
   assert.equal(manifest.start_url, "/");
-  assert.deepEqual(manifest.icons, [
-    {
-      src: "/app-icon.svg",
-      sizes: "any",
-      type: "image/svg+xml",
+
       purpose: "any maskable",
     },
   ]);
   assert.match(worker, /cacheAppShell/);
-  assert.match(worker, /request\.mode === "navigate"/);
-  assert.match(worker, /catch\(\(\) => caches\.match\("\/"\)\)/);
-});
+

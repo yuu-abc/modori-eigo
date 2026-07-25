@@ -47,6 +47,7 @@ export default function Home() {
   }, []);
 
 
+
   const nextWord = () => {
     setWordIndex((current) => (current + 1) % wordBank.length);
     setAnswerOpen(false);
