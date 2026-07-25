@@ -225,12 +225,31 @@
       .word {
         margin: auto 0 17px;
       }
+      .word-line {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
       .word strong {
         display: block;
         overflow-wrap: anywhere;
         font: 600 clamp(34px, 6vw, 49px) Georgia, serif;
       }
       .word span { color: #d3cee9; font-size: 11px; }
+      .speech-button {
+        flex: 0 0 auto;
+        min-height: 38px;
+        padding: 0 12px;
+        border: 1px solid #ffffff4a;
+        border-radius: 999px;
+        background: #ffffff14;
+        color: white;
+        font-size: 10px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      .speech-button:hover { background: #ffffff24; }
       .answer {
         min-height: 82px;
         padding: 16px;
@@ -241,7 +260,20 @@
       .answer p { margin: 0; color: #d7d2e8; font-size: 11px; line-height: 1.7; }
       .answer b, .answer small { display: block; }
       .answer b { font-size: 14px; }
-      .answer small { margin-top: 8px; color: #d7d2e8; font: 12px Georgia, serif; }
+      .answer small { color: #d7d2e8; font: 12px Georgia, serif; }
+      .example-line {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 9px;
+      }
+      .example-line small { line-height: 1.5; }
+      .example-line .speech-button {
+        min-height: 32px;
+        padding-inline: 10px;
+        font-size: 9px;
+      }
       .actions {
         display: grid;
         grid-template-columns: 1fr 1.15fr;
@@ -427,7 +459,10 @@
           </div>
           <span class="custom-badge" id="customBadge" hidden>自分で追加</span>
           <div class="word">
-            <strong id="word">accomplish</strong>
+            <div class="word-line">
+              <strong id="word">accomplish</strong>
+              <button class="speech-button" id="speakWord" type="button" aria-label="単語を英語で読み上げる">🔊 単語</button>
+            </div>
             <span id="pronunciation">/əkɑ́mpliʃ/</span>
           </div>
           <div class="answer" id="answer">
@@ -460,7 +495,7 @@
         <p class="status" id="status" aria-live="polite">自分で追加した単語：0語</p>
       </section>
 
-      <p class="note">追加した単語はこのHTMLを開いたブラウザに保存されます。<br>ブラウザの履歴・サイトデータを消すと、追加した単語も消える場合があります。</p>
+      <p class="note">追加した単語はこのHTMLを開いたブラウザに保存されます。<br>読み上げには端末の英語音声を使います。完全オフラインで聞くには、端末に英語音声をダウンロードしておいてください。</p>
     </main>
 
     <footer>
@@ -502,6 +537,7 @@
           pronunciation: document.querySelector("#pronunciation"),
           answer: document.querySelector("#answer"),
           meaning: document.querySelector("#meaning"),
+          speakWord: document.querySelector("#speakWord"),
           next: document.querySelector("#next"),
           customBadge: document.querySelector("#customBadge"),
           deleteWord: document.querySelector("#deleteWord"),
@@ -600,10 +636,51 @@
           meaning.textContent = word.meaning;
           elements.answer.append(meaning);
           if (word.example) {
+            const exampleLine = document.createElement("div");
+            exampleLine.className = "example-line";
             const example = document.createElement("small");
             example.textContent = word.example;
-            elements.answer.append(example);
+            const speakExample = document.createElement("button");
+            speakExample.type = "button";
+            speakExample.className = "speech-button";
+            speakExample.textContent = "🔊 例文";
+            speakExample.setAttribute("aria-label", "例文を英語で読み上げる");
+            speakExample.addEventListener("click", () => speakEnglish(word.example, "例文"));
+            exampleLine.append(example, speakExample);
+            elements.answer.append(exampleLine);
           }
+        }
+
+        function speakEnglish(text, label) {
+          if (!text) {
+            showStatus(`${label}が登録されていません。`, "error");
+            return;
+          }
+          if (!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined") {
+            showStatus("このブラウザは音声読み上げに対応していません。", "error");
+            return;
+          }
+
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = "en-US";
+          utterance.rate = label === "単語" ? 0.78 : 0.88;
+          utterance.pitch = 1;
+
+          const voices = window.speechSynthesis.getVoices();
+          const englishVoices = voices.filter((voice) => voice.lang.toLowerCase().startsWith("en"));
+          utterance.voice =
+            englishVoices.find((voice) => voice.localService && voice.lang.toLowerCase().startsWith("en-us")) ||
+            englishVoices.find((voice) => voice.localService) ||
+            englishVoices.find((voice) => voice.lang.toLowerCase().startsWith("en-us")) ||
+            englishVoices[0] ||
+            null;
+
+          utterance.onerror = () => {
+            showStatus("英語音声を再生できませんでした。端末の音声設定を確認してください。", "error");
+          };
+          window.speechSynthesis.speak(utterance);
+          showStatus(`${label}を読み上げています。`, "success");
         }
 
         function render() {
@@ -634,6 +711,10 @@
         elements.meaning.addEventListener("click", () => {
           answerOpen = !answerOpen;
           render();
+        });
+
+        elements.speakWord.addEventListener("click", () => {
+          speakEnglish(getCurrentWord().word, "単語");
         });
 
         elements.next.addEventListener("click", () => {
