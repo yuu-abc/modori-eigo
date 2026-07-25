@@ -46,11 +46,6 @@ export default function Home() {
     };
   }, []);
 
-  useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      void navigator.serviceWorker.register("/sw.js");
-    }
-  }, []);
 
   const nextWord = () => {
     setWordIndex((current) => (current + 1) % wordBank.length);
