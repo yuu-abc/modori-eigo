@@ -1,0 +1,18 @@
+{
+  "name": "もどり英語",
+  "short_name": "もどり英語",
+  "description": "休んでも、また戻れる英語学習アプリ。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f4ed",
+  "theme_color": "#6e62b6",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

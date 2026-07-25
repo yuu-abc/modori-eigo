@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Mood = "good" | "okay" | "tired";
 
@@ -29,8 +29,28 @@ export default function Home() {
   const [mood, setMood] = useState<Mood>("okay");
   const [wordIndex, setWordIndex] = useState(0);
   const [answerOpen, setAnswerOpen] = useState(false);
+  const [isOffline, setIsOffline] = useState(false);
   const selectedMood = moodOptions.find((item) => item.id === mood)!;
   const word = wordBank[wordIndex];
+
+  useEffect(() => {
+    const updateConnection = () => setIsOffline(!navigator.onLine);
+
+    updateConnection();
+    window.addEventListener("online", updateConnection);
+    window.addEventListener("offline", updateConnection);
+
+    return () => {
+      window.removeEventListener("online", updateConnection);
+      window.removeEventListener("offline", updateConnection);
+    };
+  }, []);
+
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      void navigator.serviceWorker.register("/sw.js");
+    }
+  }, []);
 
   const nextWord = () => {
     setWordIndex((current) => (current + 1) % wordBank.length);
@@ -45,6 +65,14 @@ export default function Home() {
           <span>もどり英語</span>
         </a>
         <span className="simple-message">休んでも、また戻れば大丈夫。</span>
+        {isOffline && (
+          <span className="offline-status" role="status" aria-label="オフラインです">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 9.5a12 12 0 0 1 13.4-2.18M2.8 5.8 21.2 18.2M7.3 13.1A7.3 7.3 0 0 1 12 11.4c1.42 0 2.74.4 3.87 1.1M10.1 16.1a3.1 3.1 0 0 1 3.55.2M12 20h.01" />
+            </svg>
+            <span>オフライン</span>
+          </span>
+        )}
       </header>
 
       <div className="simple-shell" id="top">
