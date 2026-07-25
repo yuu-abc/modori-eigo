@@ -2,16 +2,698 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="refresh" content="0; url=https://modori-eigo-habit.yuuyuu.chatgpt.site" />
-    <title>もどり英語を開く</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#6e62b6" />
+    <meta name="description" content="オフラインで使える個人用の英単語アプリ" />
+    <title>もどり英語｜オフライン版</title>
     <style>
-      body { min-height: 100vh; display: grid; place-items: center; margin: 0; background: #f7f4ed; color: #29263c; font-family: "Yu Gothic", sans-serif; }
-      main { padding: 32px; text-align: center; }
-      a { display: inline-block; margin-top: 14px; padding: 12px 20px; border-radius: 999px; background: #6e62b6; color: white; font-weight: 700; text-decoration: none; }
+      :root {
+        --ink: #29263c;
+        --muted: #777386;
+        --purple: #6e62b6;
+        --purple-dark: #4d427e;
+        --cream: #f7f4ed;
+        --paper: #fffdf9;
+        --line: #e7e2da;
+        --success: #3f765f;
+        --error: #b34f46;
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background: var(--cream);
+        color: var(--ink);
+        font-family: "Hiragino Sans", "Yu Gothic UI", "Yu Gothic", sans-serif;
+      }
+      button, input { font: inherit; }
+      button, a { -webkit-tap-highlight-color: transparent; }
+      button:focus-visible, input:focus-visible {
+        outline: 3px solid #c9c2e8;
+        outline-offset: 2px;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        min-height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 10px max(16px, calc((100vw - 940px) / 2));
+        border-bottom: 1px solid #2d29440d;
+        background: #f7f4edef;
+        backdrop-filter: blur(16px);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--ink);
+        font-weight: 800;
+        text-decoration: none;
+      }
+      .brand-mark {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        border-radius: 11px 11px 11px 4px;
+        background: var(--purple);
+        color: white;
+        font: italic 22px Georgia, serif;
+      }
+      .header-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .offline-badge, .total-badge {
+        padding: 7px 10px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--paper);
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 700;
+      }
+      .offline-badge::before {
+        content: "";
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        margin-right: 5px;
+        border-radius: 50%;
+        background: #6fa58b;
+      }
+      main {
+        width: min(940px, calc(100% - 28px));
+        margin: auto;
+        padding: 42px 0 64px;
+      }
+      .hero {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 24px;
+        padding: 12px 22px 38px;
+      }
+      .eyebrow, .kicker {
+        margin: 0 0 10px;
+        color: var(--purple);
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: .2em;
+      }
+      h1 {
+        margin: 0;
+        font: 500 clamp(46px, 7vw, 68px)/1.08 "Yu Mincho", "Hiragino Mincho ProN", serif;
+        letter-spacing: -.06em;
+      }
+      h1 em { color: var(--purple); font-style: normal; }
+      .hero-copy {
+        margin: 18px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.9;
+      }
+      .return-mark {
+        width: 148px;
+        height: 148px;
+        display: grid;
+        place-items: center;
+        border: 1px solid #dcd5ee;
+        border-radius: 50%;
+        color: white;
+        font-size: 40px;
+      }
+      .return-mark span {
+        width: 74px;
+        height: 74px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: var(--purple);
+        box-shadow: 0 16px 36px #4f43803d;
+      }
+      .study {
+        display: grid;
+        grid-template-columns: .85fr 1.15fr;
+        gap: 16px;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background: #fffdf9c7;
+        box-shadow: 0 18px 60px #312b4b0a;
+      }
+      .mood-panel { padding: 22px 18px; }
+      h2 {
+        margin: 0;
+        font: 600 22px "Yu Mincho", "Hiragino Mincho ProN", serif;
+      }
+      .moods {
+        display: grid;
+        gap: 8px;
+        margin-top: 20px;
+      }
+      .mood {
+        min-height: 60px;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        align-items: center;
+        gap: 11px;
+        padding: 10px 13px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: white;
+        color: var(--ink);
+        cursor: pointer;
+        text-align: left;
+      }
+      .mood.active {
+        border-color: var(--purple);
+        background: #f5f2ff;
+        box-shadow: inset 0 0 0 1px var(--purple);
+      }
+      .face {
+        width: 31px;
+        height: 31px;
+        border-radius: 50%;
+        background: #c9c1ee;
+      }
+      .face.good { background: #f2c8a5; }
+      .face.tired { background: #b9d8ce; }
+      .mood strong, .mood small { display: block; }
+      .mood strong { margin-bottom: 3px; font-size: 12px; }
+      .mood small { color: var(--muted); font-size: 9px; }
+      .word-card {
+        min-height: 390px;
+        display: flex;
+        flex-direction: column;
+        padding: 26px;
+        border-radius: 19px;
+        background: var(--purple);
+        color: white;
+        box-shadow: 0 18px 44px #4c407e30;
+      }
+      .word-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .word-head .kicker { color: #ded9f5; }
+      .word-head h2 { font-size: 21px; }
+      .position {
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #ffffff1f;
+        color: #ece9fa;
+        font-size: 10px;
+      }
+      .custom-badge {
+        align-self: flex-start;
+        margin-top: 12px;
+        padding: 5px 9px;
+        border-radius: 999px;
+        background: #ffffff1f;
+        color: #eeeafd;
+        font-size: 9px;
+        font-weight: 800;
+      }
+      .word {
+        margin: auto 0 17px;
+      }
+      .word strong {
+        display: block;
+        overflow-wrap: anywhere;
+        font: 600 clamp(34px, 6vw, 49px) Georgia, serif;
+      }
+      .word span { color: #d3cee9; font-size: 11px; }
+      .answer {
+        min-height: 82px;
+        padding: 16px;
+        border: 1px solid #ffffff2e;
+        border-radius: 14px;
+        background: #ffffff12;
+      }
+      .answer p { margin: 0; color: #d7d2e8; font-size: 11px; line-height: 1.7; }
+      .answer b, .answer small { display: block; }
+      .answer b { font-size: 14px; }
+      .answer small { margin-top: 8px; color: #d7d2e8; font: 12px Georgia, serif; }
+      .actions {
+        display: grid;
+        grid-template-columns: 1fr 1.15fr;
+        gap: 9px;
+        margin-top: 13px;
+      }
+      .actions button {
+        min-height: 45px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      .secondary { border: 1px solid #ffffff4a; background: transparent; color: white; }
+      .primary { border: 0; background: white; color: var(--purple-dark); }
+      .delete-button {
+        align-self: center;
+        margin-top: 11px;
+        padding: 5px 8px;
+        border: 0;
+        background: transparent;
+        color: #ddd7f0;
+        font-size: 9px;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        cursor: pointer;
+      }
+      .add-panel {
+        margin-top: 16px;
+        padding: 24px 26px;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: var(--paper);
+      }
+      .add-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+      }
+      .add-heading p:last-child {
+        margin: 7px 0 0;
+        color: var(--muted);
+        font-size: 10px;
+      }
+      .toggle-form {
+        flex: 0 0 auto;
+        min-height: 41px;
+        padding: 0 16px;
+        border: 0;
+        border-radius: 999px;
+        background: var(--purple);
+        color: white;
+        font-size: 11px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      form {
+        display: none;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 22px;
+        padding-top: 20px;
+        border-top: 1px solid var(--line);
+      }
+      form.open { display: grid; }
+      label span {
+        display: block;
+        margin: 0 0 6px 3px;
+        font-size: 10px;
+        font-weight: 800;
+      }
+      label b, label i {
+        margin-left: 5px;
+        font-size: 8px;
+        font-style: normal;
+      }
+      label b { color: var(--error); }
+      label i { color: var(--muted); }
+      input {
+        width: 100%;
+        min-height: 47px;
+        padding: 0 13px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fbfaf7;
+        color: var(--ink);
+        font-size: 13px;
+      }
+      .save-button {
+        grid-column: 1 / -1;
+        min-height: 48px;
+        border: 0;
+        border-radius: 13px;
+        background: #2f2c44;
+        color: white;
+        font-size: 12px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      .status {
+        min-height: 17px;
+        margin: 14px 0 0;
+        color: var(--muted);
+        font-size: 10px;
+      }
+      .status.success { color: var(--success); }
+      .status.error { color: var(--error); }
+      .note {
+        margin: 20px 0 0;
+        color: var(--muted);
+        font-size: 10px;
+        line-height: 1.7;
+        text-align: center;
+      }
+      footer {
+        min-height: 90px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        padding: 20px;
+        border-top: 1px solid var(--line);
+        background: #f1eee7;
+      }
+      footer p { margin: 0; color: var(--muted); font-size: 10px; }
+      [hidden] { display: none !important; }
+      @media (max-width: 700px) {
+        header { padding-inline: 14px; }
+        .offline-badge { display: none; }
+        main { padding-top: 30px; }
+        .hero { grid-template-columns: 1fr; padding: 8px 7px 28px; }
+        h1 { font-size: 51px; }
+        .return-mark { display: none; }
+        .study { grid-template-columns: 1fr; padding: 9px; }
+        .mood-panel { padding: 18px 10px 12px; }
+        .moods { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+        .mood { grid-template-columns: 1fr; justify-items: center; padding: 9px 4px; text-align: center; }
+        .word-card { min-height: 380px; padding: 22px 18px; }
+        .add-panel { padding: 21px 17px; }
+        .add-heading { align-items: flex-start; }
+        .add-heading h2 { font-size: 19px; }
+        .toggle-form { min-height: 39px; padding-inline: 12px; font-size: 10px; }
+        form { grid-template-columns: 1fr; }
+        .save-button { grid-column: auto; }
+        footer { justify-content: flex-start; flex-wrap: wrap; }
+      }
     </style>
   </head>
   <body>
-    <main><h1>もどり英語</h1><p>単語アプリを開いています。</p><a href="https://modori-eigo-habit.yuuyuu.chatgpt.site">開かない場合はこちら</a></main>
+    <header>
+      <a class="brand" href="#top" aria-label="もどり英語 ホーム">
+        <span class="brand-mark" aria-hidden="true">m</span>
+        <span>もどり英語</span>
+      </a>
+      <div class="header-info">
+        <span class="offline-badge">オフライン</span>
+        <span class="total-badge" id="total">全12語</span>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">WELCOME BACK</p>
+          <h1>今日も、<br><em>ここから。</em></h1>
+          <p class="hero-copy">通信がなくても使える、自分だけの英単語帳。<br>覚えたい単語を少しずつ追加できます。</p>
+        </div>
+        <div class="return-mark" aria-hidden="true"><span>↩</span></div>
+      </section>
+
+      <section class="study" aria-labelledby="study-title">
+        <div class="mood-panel">
+          <p class="kicker">STEP 1</p>
+          <h2 id="study-title">いまの気分を選ぶ</h2>
+          <div class="moods" id="moods"></div>
+        </div>
+
+        <article class="word-card">
+          <div class="word-head">
+            <div><p class="kicker">STEP 2</p><h2 id="today">今日は5語</h2></div>
+            <span class="position" id="position">1 / 12</span>
+          </div>
+          <span class="custom-badge" id="customBadge" hidden>自分で追加</span>
+          <div class="word">
+            <strong id="word">accomplish</strong>
+            <span id="pronunciation">/əkɑ́mpliʃ/</span>
+          </div>
+          <div class="answer" id="answer">
+            <p>まず英単語を見て、意味を考えてみましょう。</p>
+          </div>
+          <div class="actions">
+            <button class="secondary" id="meaning" type="button">意味を見る</button>
+            <button class="primary" id="next" type="button">次の単語 →</button>
+          </div>
+          <button class="delete-button" id="deleteWord" type="button" hidden>この単語を削除</button>
+        </article>
+      </section>
+
+      <section class="add-panel" aria-labelledby="add-title">
+        <div class="add-heading">
+          <div>
+            <p class="kicker">MY WORDS</p>
+            <h2 id="add-title">覚えたい単語を追加</h2>
+            <p>この端末のブラウザ内に保存されます。</p>
+          </div>
+          <button class="toggle-form" id="toggleForm" type="button">＋ 単語を追加</button>
+        </div>
+        <form id="wordForm">
+          <label><span>英単語 <b>必須</b></span><input id="inputWord" autocomplete="off" autocapitalize="none" placeholder="例：improve" maxlength="100" required></label>
+          <label><span>意味 <b>必須</b></span><input id="inputMeaning" autocomplete="off" placeholder="例：改善する" maxlength="240" required></label>
+          <label><span>発音 <i>任意</i></span><input id="inputPronunciation" autocomplete="off" placeholder="例：/imprúːv/" maxlength="100"></label>
+          <label><span>例文 <i>任意</i></span><input id="inputExample" autocomplete="off" placeholder="例：I want to improve my English." maxlength="300"></label>
+          <button class="save-button" type="submit">この単語を保存</button>
+        </form>
+        <p class="status" id="status" aria-live="polite">自分で追加した単語：0語</p>
+      </section>
+
+      <p class="note">追加した単語はこのHTMLを開いたブラウザに保存されます。<br>ブラウザの履歴・サイトデータを消すと、追加した単語も消える場合があります。</p>
+    </main>
+
+    <footer>
+      <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">m</span><span>もどり英語</span></a>
+      <p>英語学習に、戻れる場所を。</p>
+    </footer>
+
+    <script>
+      (() => {
+        "use strict";
+
+        const STORAGE_KEY = "modori-eigo-custom-words-v1";
+        const moods = [
+          { id: "good", label: "元気", note: "10語やってみる", count: 10 },
+          { id: "okay", label: "ふつう", note: "5語だけ進める", count: 5 },
+          { id: "tired", label: "疲れた", note: "1語だけ見る", count: 1 }
+        ];
+        const builtInWords = [
+          { word: "accomplish", pronunciation: "/əkɑ́mpliʃ/", meaning: "達成する、成し遂げる", example: "We accomplished our goal." },
+          { word: "approach", pronunciation: "/əpróutʃ/", meaning: "近づく、取り組み方", example: "We need a new approach." },
+          { word: "benefit", pronunciation: "/bénəfit/", meaning: "利益、恩恵を受ける", example: "Exercise benefits your health." },
+          { word: "contribute", pronunciation: "/kəntríbjuːt/", meaning: "貢献する、寄付する", example: "Everyone can contribute." },
+          { word: "decline", pronunciation: "/dikláin/", meaning: "減少する、断る", example: "The number began to decline." },
+          { word: "essential", pronunciation: "/isénʃəl/", meaning: "必要不可欠な", example: "Water is essential for life." },
+          { word: "feature", pronunciation: "/fíːtʃər/", meaning: "特徴、特集する", example: "The app has a useful feature." },
+          { word: "maintain", pronunciation: "/meintéin/", meaning: "維持する、主張する", example: "It is hard to maintain focus." },
+          { word: "opportunity", pronunciation: "/ɑ̀pərtjúːnəti/", meaning: "機会、好機", example: "This is a great opportunity." },
+          { word: "require", pronunciation: "/rikwáiər/", meaning: "必要とする、要求する", example: "The job requires patience." },
+          { word: "significant", pronunciation: "/signífikənt/", meaning: "重要な、かなりの", example: "We made significant progress." },
+          { word: "variety", pronunciation: "/vəráiəti/", meaning: "多様性、さまざまな種類", example: "The shop sells a variety of books." }
+        ];
+
+        const elements = {
+          moods: document.querySelector("#moods"),
+          today: document.querySelector("#today"),
+          position: document.querySelector("#position"),
+          total: document.querySelector("#total"),
+          word: document.querySelector("#word"),
+          pronunciation: document.querySelector("#pronunciation"),
+          answer: document.querySelector("#answer"),
+          meaning: document.querySelector("#meaning"),
+          next: document.querySelector("#next"),
+          customBadge: document.querySelector("#customBadge"),
+          deleteWord: document.querySelector("#deleteWord"),
+          toggleForm: document.querySelector("#toggleForm"),
+          form: document.querySelector("#wordForm"),
+          inputWord: document.querySelector("#inputWord"),
+          inputMeaning: document.querySelector("#inputMeaning"),
+          inputPronunciation: document.querySelector("#inputPronunciation"),
+          inputExample: document.querySelector("#inputExample"),
+          status: document.querySelector("#status")
+        };
+
+        let mood = "okay";
+        let index = 0;
+        let answerOpen = false;
+        let formOpen = false;
+        let customWords = loadCustomWords();
+
+        function loadCustomWords() {
+          try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (!saved) return [];
+            const parsed = JSON.parse(saved);
+            return Array.isArray(parsed) ? parsed.filter(isValidSavedWord) : [];
+          } catch {
+            return [];
+          }
+        }
+
+        function isValidSavedWord(item) {
+          return item && typeof item.id === "string" && typeof item.word === "string" &&
+            typeof item.meaning === "string" && typeof item.pronunciation === "string" &&
+            typeof item.example === "string";
+        }
+
+        function saveCustomWords() {
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(customWords));
+            return true;
+          } catch {
+            showStatus("このブラウザでは単語を保存できませんでした。", "error");
+            return false;
+          }
+        }
+
+        function getAllWords() {
+          return [...builtInWords, ...customWords];
+        }
+
+        function getCurrentWord() {
+          const allWords = getAllWords();
+          if (index >= allWords.length) index = Math.max(0, allWords.length - 1);
+          return allWords[index];
+        }
+
+        function isCustomWord(word) {
+          return typeof word.id === "string";
+        }
+
+        function renderMoods() {
+          elements.moods.replaceChildren();
+          moods.forEach((item) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = `mood${item.id === mood ? " active" : ""}`;
+            button.setAttribute("aria-pressed", String(item.id === mood));
+
+            const face = document.createElement("span");
+            face.className = `face ${item.id}`;
+            face.setAttribute("aria-hidden", "true");
+
+            const copy = document.createElement("span");
+            const label = document.createElement("strong");
+            label.textContent = item.label;
+            const note = document.createElement("small");
+            note.textContent = item.note;
+            copy.append(label, note);
+            button.append(face, copy);
+            button.addEventListener("click", () => {
+              mood = item.id;
+              render();
+            });
+            elements.moods.append(button);
+          });
+        }
+
+        function renderAnswer(word) {
+          elements.answer.replaceChildren();
+          if (!answerOpen) {
+            const guide = document.createElement("p");
+            guide.textContent = "まず英単語を見て、意味を考えてみましょう。";
+            elements.answer.append(guide);
+            return;
+          }
+          const meaning = document.createElement("b");
+          meaning.textContent = word.meaning;
+          elements.answer.append(meaning);
+          if (word.example) {
+            const example = document.createElement("small");
+            example.textContent = word.example;
+            elements.answer.append(example);
+          }
+        }
+
+        function render() {
+          const allWords = getAllWords();
+          const word = getCurrentWord();
+          const selectedMood = moods.find((item) => item.id === mood);
+          const custom = isCustomWord(word);
+
+          elements.today.textContent = `今日は${selectedMood.count}語`;
+          elements.position.textContent = `${index + 1} / ${allWords.length}`;
+          elements.total.textContent = `全${allWords.length}語`;
+          elements.word.textContent = word.word;
+          elements.pronunciation.textContent = word.pronunciation || "発音は未登録";
+          elements.meaning.textContent = answerOpen ? "意味を隠す" : "意味を見る";
+          elements.customBadge.hidden = !custom;
+          elements.deleteWord.hidden = !custom;
+          elements.toggleForm.textContent = formOpen ? "閉じる" : "＋ 単語を追加";
+          elements.form.classList.toggle("open", formOpen);
+          renderAnswer(word);
+          renderMoods();
+        }
+
+        function showStatus(message, type = "") {
+          elements.status.textContent = message;
+          elements.status.className = `status${type ? ` ${type}` : ""}`;
+        }
+
+        elements.meaning.addEventListener("click", () => {
+          answerOpen = !answerOpen;
+          render();
+        });
+
+        elements.next.addEventListener("click", () => {
+          index = (index + 1) % getAllWords().length;
+          answerOpen = false;
+          render();
+        });
+
+        elements.toggleForm.addEventListener("click", () => {
+          formOpen = !formOpen;
+          render();
+          if (formOpen) setTimeout(() => elements.inputWord.focus(), 0);
+        });
+
+        elements.form.addEventListener("submit", (event) => {
+          event.preventDefault();
+          const word = elements.inputWord.value.trim();
+          const meaning = elements.inputMeaning.value.trim();
+          if (!word || !meaning) {
+            showStatus("英単語と意味を入力してください。", "error");
+            return;
+          }
+
+          const newWord = {
+            id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+            word,
+            meaning,
+            pronunciation: elements.inputPronunciation.value.trim(),
+            example: elements.inputExample.value.trim()
+          };
+          customWords.push(newWord);
+          if (!saveCustomWords()) {
+            customWords.pop();
+            return;
+          }
+
+          index = builtInWords.length + customWords.length - 1;
+          answerOpen = true;
+          formOpen = false;
+          elements.form.reset();
+          showStatus(`「${word}」を保存しました。`, "success");
+          render();
+        });
+
+        elements.deleteWord.addEventListener("click", () => {
+          const current = getCurrentWord();
+          if (!isCustomWord(current)) return;
+          if (!confirm(`「${current.word}」を削除しますか？`)) return;
+
+          customWords = customWords.filter((item) => item.id !== current.id);
+          if (!saveCustomWords()) return;
+          index = Math.max(0, Math.min(index - 1, getAllWords().length - 1));
+          answerOpen = false;
+          showStatus(`「${current.word}」を削除しました。`, "success");
+          render();
+        });
+
+        showStatus(`自分で追加した単語：${customWords.length}語`);
+        render();
+      })();
+    </script>
   </body>
 </html>
