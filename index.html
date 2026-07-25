@@ -289,17 +289,37 @@
       }
       .secondary { border: 1px solid #ffffff4a; background: transparent; color: white; }
       .primary { border: 0; background: white; color: var(--purple-dark); }
-      .delete-button {
+      .word-manage {
         align-self: center;
+        display: flex;
+        align-items: center;
+        gap: 12px;
         margin-top: 11px;
+      }
+      .edit-button, .delete-button {
         padding: 5px 8px;
         border: 0;
         background: transparent;
         color: #ddd7f0;
         font-size: 9px;
+        cursor: pointer;
+      }
+      .edit-button {
+        border: 1px solid #ffffff35;
+        border-radius: 999px;
+        text-decoration: none;
+      }
+      .delete-button {
         text-decoration: underline;
         text-underline-offset: 3px;
-        cursor: pointer;
+      }
+      .translation {
+        margin: 10px 0 0 !important;
+        padding-top: 9px;
+        border-top: 1px dashed #ffffff2b;
+        color: #f1eefb !important;
+        font-size: 10px !important;
+        line-height: 1.6 !important;
       }
       .add-panel {
         margin-top: 16px;
@@ -472,11 +492,14 @@
             <button class="secondary" id="meaning" type="button">意味を見る</button>
             <button class="primary" id="next" type="button">次の単語 →</button>
           </div>
-          <button class="delete-button" id="deleteWord" type="button" hidden>この単語を削除</button>
+          <div class="word-manage" id="wordManage" hidden>
+            <button class="edit-button" id="editWord" type="button">この単語を修正</button>
+            <button class="delete-button" id="deleteWord" type="button">削除</button>
+          </div>
         </article>
       </section>
 
-      <section class="add-panel" aria-labelledby="add-title">
+      <section class="add-panel" id="addPanel" aria-labelledby="add-title">
         <div class="add-heading">
           <div>
             <p class="kicker">MY WORDS</p>
@@ -490,7 +513,8 @@
           <label><span>意味 <b>必須</b></span><input id="inputMeaning" autocomplete="off" placeholder="例：改善する" maxlength="240" required></label>
           <label><span>発音 <i>任意</i></span><input id="inputPronunciation" autocomplete="off" placeholder="例：/imprúːv/" maxlength="100"></label>
           <label><span>例文 <i>任意</i></span><input id="inputExample" autocomplete="off" placeholder="例：I want to improve my English." maxlength="300"></label>
-          <button class="save-button" type="submit">この単語を保存</button>
+          <label><span>例文の日本語訳 <i>任意</i></span><input id="inputTranslation" autocomplete="off" placeholder="例：私は英語を上達させたいです。" maxlength="300"></label>
+          <button class="save-button" id="saveWord" type="submit">この単語を保存</button>
         </form>
         <p class="status" id="status" aria-live="polite">自分で追加した単語：0語</p>
       </section>
@@ -514,18 +538,18 @@
           { id: "tired", label: "疲れた", note: "1語だけ見る", count: 1 }
         ];
         const builtInWords = [
-          { word: "accomplish", pronunciation: "/əkɑ́mpliʃ/", meaning: "達成する、成し遂げる", example: "We accomplished our goal." },
-          { word: "approach", pronunciation: "/əpróutʃ/", meaning: "近づく、取り組み方", example: "We need a new approach." },
-          { word: "benefit", pronunciation: "/bénəfit/", meaning: "利益、恩恵を受ける", example: "Exercise benefits your health." },
-          { word: "contribute", pronunciation: "/kəntríbjuːt/", meaning: "貢献する、寄付する", example: "Everyone can contribute." },
-          { word: "decline", pronunciation: "/dikláin/", meaning: "減少する、断る", example: "The number began to decline." },
-          { word: "essential", pronunciation: "/isénʃəl/", meaning: "必要不可欠な", example: "Water is essential for life." },
-          { word: "feature", pronunciation: "/fíːtʃər/", meaning: "特徴、特集する", example: "The app has a useful feature." },
-          { word: "maintain", pronunciation: "/meintéin/", meaning: "維持する、主張する", example: "It is hard to maintain focus." },
-          { word: "opportunity", pronunciation: "/ɑ̀pərtjúːnəti/", meaning: "機会、好機", example: "This is a great opportunity." },
-          { word: "require", pronunciation: "/rikwáiər/", meaning: "必要とする、要求する", example: "The job requires patience." },
-          { word: "significant", pronunciation: "/signífikənt/", meaning: "重要な、かなりの", example: "We made significant progress." },
-          { word: "variety", pronunciation: "/vəráiəti/", meaning: "多様性、さまざまな種類", example: "The shop sells a variety of books." }
+          { word: "accomplish", pronunciation: "/əkɑ́mpliʃ/", meaning: "達成する、成し遂げる", example: "We accomplished our goal.", translation: "私たちは目標を達成しました。" },
+          { word: "approach", pronunciation: "/əpróutʃ/", meaning: "近づく、取り組み方", example: "We need a new approach.", translation: "私たちには新しい取り組み方が必要です。" },
+          { word: "benefit", pronunciation: "/bénəfit/", meaning: "利益、恩恵を受ける", example: "Exercise benefits your health.", translation: "運動は健康に役立ちます。" },
+          { word: "contribute", pronunciation: "/kəntríbjuːt/", meaning: "貢献する、寄付する", example: "Everyone can contribute.", translation: "誰もが貢献できます。" },
+          { word: "decline", pronunciation: "/dikláin/", meaning: "減少する、断る", example: "The number began to decline.", translation: "その数は減少し始めました。" },
+          { word: "essential", pronunciation: "/isénʃəl/", meaning: "必要不可欠な", example: "Water is essential for life.", translation: "水は生命に不可欠です。" },
+          { word: "feature", pronunciation: "/fíːtʃər/", meaning: "特徴、特集する", example: "The app has a useful feature.", translation: "そのアプリには便利な機能があります。" },
+          { word: "maintain", pronunciation: "/meintéin/", meaning: "維持する、主張する", example: "It is hard to maintain focus.", translation: "集中を維持するのは難しいです。" },
+          { word: "opportunity", pronunciation: "/ɑ̀pərtjúːnəti/", meaning: "機会、好機", example: "This is a great opportunity.", translation: "これは素晴らしい機会です。" },
+          { word: "require", pronunciation: "/rikwáiər/", meaning: "必要とする、要求する", example: "The job requires patience.", translation: "その仕事には忍耐が必要です。" },
+          { word: "significant", pronunciation: "/signífikənt/", meaning: "重要な、かなりの", example: "We made significant progress.", translation: "私たちは大きな進歩を遂げました。" },
+          { word: "variety", pronunciation: "/vəráiəti/", meaning: "多様性、さまざまな種類", example: "The shop sells a variety of books.", translation: "その店ではさまざまな本を販売しています。" }
         ];
 
         const elements = {
@@ -540,13 +564,19 @@
           speakWord: document.querySelector("#speakWord"),
           next: document.querySelector("#next"),
           customBadge: document.querySelector("#customBadge"),
+          wordManage: document.querySelector("#wordManage"),
+          editWord: document.querySelector("#editWord"),
           deleteWord: document.querySelector("#deleteWord"),
+          addPanel: document.querySelector("#addPanel"),
+          formTitle: document.querySelector("#add-title"),
           toggleForm: document.querySelector("#toggleForm"),
           form: document.querySelector("#wordForm"),
           inputWord: document.querySelector("#inputWord"),
           inputMeaning: document.querySelector("#inputMeaning"),
           inputPronunciation: document.querySelector("#inputPronunciation"),
           inputExample: document.querySelector("#inputExample"),
+          inputTranslation: document.querySelector("#inputTranslation"),
+          saveWord: document.querySelector("#saveWord"),
           status: document.querySelector("#status")
         };
 
@@ -554,6 +584,7 @@
         let index = 0;
         let answerOpen = false;
         let formOpen = false;
+        let editingId = null;
         let customWords = loadCustomWords();
 
         function loadCustomWords() {
@@ -561,16 +592,22 @@
             const saved = localStorage.getItem(STORAGE_KEY);
             if (!saved) return [];
             const parsed = JSON.parse(saved);
-            return Array.isArray(parsed) ? parsed.filter(isValidSavedWord) : [];
+            return Array.isArray(parsed) ? parsed.map(normalizeSavedWord).filter(Boolean) : [];
           } catch {
             return [];
           }
         }
 
-        function isValidSavedWord(item) {
-          return item && typeof item.id === "string" && typeof item.word === "string" &&
-            typeof item.meaning === "string" && typeof item.pronunciation === "string" &&
-            typeof item.example === "string";
+        function normalizeSavedWord(item) {
+          if (!item || typeof item.id !== "string" || typeof item.word !== "string" ||
+              typeof item.meaning !== "string" || typeof item.pronunciation !== "string" ||
+              typeof item.example !== "string") {
+            return null;
+          }
+          return {
+            ...item,
+            translation: typeof item.translation === "string" ? item.translation : ""
+          };
         }
 
         function saveCustomWords() {
@@ -649,6 +686,12 @@
             exampleLine.append(example, speakExample);
             elements.answer.append(exampleLine);
           }
+          if (word.translation) {
+            const translation = document.createElement("p");
+            translation.className = "translation";
+            translation.textContent = `日本語訳：${word.translation}`;
+            elements.answer.append(translation);
+          }
         }
 
         function speakEnglish(text, label) {
@@ -696,8 +739,10 @@
           elements.pronunciation.textContent = word.pronunciation || "発音は未登録";
           elements.meaning.textContent = answerOpen ? "意味を隠す" : "意味を見る";
           elements.customBadge.hidden = !custom;
-          elements.deleteWord.hidden = !custom;
-          elements.toggleForm.textContent = formOpen ? "閉じる" : "＋ 単語を追加";
+          elements.wordManage.hidden = !custom;
+          elements.formTitle.textContent = editingId ? "単語を修正" : "覚えたい単語を追加";
+          elements.toggleForm.textContent = formOpen ? (editingId ? "修正をやめる" : "閉じる") : "＋ 単語を追加";
+          elements.saveWord.textContent = editingId ? "変更を保存" : "この単語を保存";
           elements.form.classList.toggle("open", formOpen);
           renderAnswer(word);
           renderMoods();
@@ -724,9 +769,32 @@
         });
 
         elements.toggleForm.addEventListener("click", () => {
-          formOpen = !formOpen;
+          if (formOpen) {
+            formOpen = false;
+            editingId = null;
+            elements.form.reset();
+          } else {
+            editingId = null;
+            elements.form.reset();
+            formOpen = true;
+          }
           render();
           if (formOpen) setTimeout(() => elements.inputWord.focus(), 0);
+        });
+
+        elements.editWord.addEventListener("click", () => {
+          const current = getCurrentWord();
+          if (!isCustomWord(current)) return;
+          editingId = current.id;
+          elements.inputWord.value = current.word;
+          elements.inputMeaning.value = current.meaning;
+          elements.inputPronunciation.value = current.pronunciation;
+          elements.inputExample.value = current.example;
+          elements.inputTranslation.value = current.translation || "";
+          formOpen = true;
+          render();
+          elements.addPanel.scrollIntoView({ behavior: "smooth", block: "center" });
+          setTimeout(() => elements.inputWord.focus(), 350);
         });
 
         elements.form.addEventListener("submit", (event) => {
@@ -738,24 +806,43 @@
             return;
           }
 
-          const newWord = {
-            id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+          const savedWord = {
+            id: editingId || `${Date.now()}-${Math.random().toString(36).slice(2)}`,
             word,
             meaning,
             pronunciation: elements.inputPronunciation.value.trim(),
-            example: elements.inputExample.value.trim()
+            example: elements.inputExample.value.trim(),
+            translation: elements.inputTranslation.value.trim()
           };
-          customWords.push(newWord);
-          if (!saveCustomWords()) {
-            customWords.pop();
-            return;
+
+          if (editingId) {
+            const customIndex = customWords.findIndex((item) => item.id === editingId);
+            if (customIndex < 0) {
+              showStatus("修正する単語が見つかりませんでした。", "error");
+              return;
+            }
+            const previousWords = customWords;
+            customWords = customWords.map((item) => item.id === editingId ? savedWord : item);
+            if (!saveCustomWords()) {
+              customWords = previousWords;
+              return;
+            }
+            index = builtInWords.length + customIndex;
+            showStatus(`「${word}」の変更を保存しました。`, "success");
+          } else {
+            customWords.push(savedWord);
+            if (!saveCustomWords()) {
+              customWords.pop();
+              return;
+            }
+            index = builtInWords.length + customWords.length - 1;
+            showStatus(`「${word}」を保存しました。`, "success");
           }
 
-          index = builtInWords.length + customWords.length - 1;
           answerOpen = true;
           formOpen = false;
+          editingId = null;
           elements.form.reset();
-          showStatus(`「${word}」を保存しました。`, "success");
           render();
         });
 
@@ -764,8 +851,17 @@
           if (!isCustomWord(current)) return;
           if (!confirm(`「${current.word}」を削除しますか？`)) return;
 
+          const previousWords = customWords;
           customWords = customWords.filter((item) => item.id !== current.id);
-          if (!saveCustomWords()) return;
+          if (!saveCustomWords()) {
+            customWords = previousWords;
+            return;
+          }
+          if (editingId === current.id) {
+            editingId = null;
+            formOpen = false;
+            elements.form.reset();
+          }
           index = Math.max(0, Math.min(index - 1, getAllWords().length - 1));
           answerOpen = false;
           showStatus(`「${current.word}」を削除しました。`, "success");
