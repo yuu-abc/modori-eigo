@@ -46,17 +46,7 @@ export default function Home() {
     };
   }, []);
 
-  useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      const prepareOfflineMode = async () => {
-        await navigator.serviceWorker.register("/sw.js");
-        const registration = await navigator.serviceWorker.ready;
-        registration.active?.postMessage({ type: "CACHE_APP_SHELL" });
-      };
 
-      void prepareOfflineMode();
-    }
-  }, []);
 
   const nextWord = () => {
     setWordIndex((current) => (current + 1) % wordBank.length);

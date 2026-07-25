@@ -1,10 +1,9 @@
-const CACHE_NAME = "modori-eigo-v4";
+
 const SHELL_URLS = [
   "/",
   "/manifest.webmanifest",
   "/app-icon.svg",
-  "/app-icon-192.png",
-  "/app-icon-512.png",
+
 ];
 
 async function cacheAppShell() {
@@ -26,14 +25,7 @@ async function cacheAppShell() {
     assetUrls.add(match[1]);
   }
 
-  await Promise.allSettled(
-    [...assetUrls].map(async (assetUrl) => {
-      const response = await fetch(assetUrl, { cache: "reload" });
-      if (response.ok) {
-        await cache.put(assetUrl, response);
-      }
-    }),
-  );
+
 }
 
 self.addEventListener("install", (event) => {
@@ -49,11 +41,6 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-self.addEventListener("message", (event) => {
-  if (event.data?.type === "CACHE_APP_SHELL") {
-    event.waitUntil(cacheAppShell());
-  }
-});
 
 self.addEventListener("fetch", (event) => {
   const { request } = event;
