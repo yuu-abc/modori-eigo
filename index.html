@@ -383,6 +383,18 @@
         color: var(--ink);
         font-size: 13px;
       }
+      .random-button {
+        grid-column: 1 / -1;
+        min-height: 44px;
+        border: 1px dashed #b9b0d8;
+        border-radius: 13px;
+        background: #f5f2ff;
+        color: var(--purple-dark);
+        font-size: 11px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      .random-button:hover { background: #eee9ff; }
       .save-button {
         grid-column: 1 / -1;
         min-height: 48px;
@@ -438,7 +450,7 @@
         .add-heading h2 { font-size: 19px; }
         .toggle-form { min-height: 39px; padding-inline: 12px; font-size: 10px; }
         form { grid-template-columns: 1fr; }
-        .save-button { grid-column: auto; }
+        .random-button, .save-button { grid-column: auto; }
         footer { justify-content: flex-start; flex-wrap: wrap; }
       }
     </style>
@@ -514,6 +526,7 @@
           <label><span>発音 <i>任意</i></span><input id="inputPronunciation" autocomplete="off" placeholder="例：/imprúːv/" maxlength="100"></label>
           <label><span>例文 <i>任意</i></span><input id="inputExample" autocomplete="off" placeholder="例：I want to improve my English." maxlength="300"></label>
           <label><span>例文の日本語訳 <i>任意</i></span><input id="inputTranslation" autocomplete="off" placeholder="例：私は英語を上達させたいです。" maxlength="300"></label>
+          <button class="random-button" id="randomWord" type="button">🎲 ランダム入力</button>
           <button class="save-button" id="saveWord" type="submit">この単語を保存</button>
         </form>
         <p class="status" id="status" aria-live="polite">自分で追加した単語：0語</p>
@@ -552,6 +565,33 @@
           { word: "variety", pronunciation: "/vəráiəti/", meaning: "多様性、さまざまな種類", example: "The shop sells a variety of books.", translation: "その店ではさまざまな本を販売しています。" }
         ];
 
+        const randomCandidates = [
+          { word: "achieve", pronunciation: "/ətʃíːv/", meaning: "達成する", example: "I want to achieve my goal.", translation: "私は自分の目標を達成したいです。" },
+          { word: "avoid", pronunciation: "/əvɔ́id/", meaning: "避ける", example: "Try to avoid unnecessary mistakes.", translation: "不必要なミスを避けるようにしてください。" },
+          { word: "compare", pronunciation: "/kəmpɛ́ər/", meaning: "比較する", example: "Let's compare the two plans.", translation: "その2つの計画を比較してみましょう。" },
+          { word: "consider", pronunciation: "/kənsídər/", meaning: "よく考える、検討する", example: "Please consider another option.", translation: "別の選択肢も検討してください。" },
+          { word: "encourage", pronunciation: "/enkə́ːridʒ/", meaning: "励ます、促す", example: "Her words encouraged me to try again.", translation: "彼女の言葉で私はもう一度挑戦する気になりました。" },
+          { word: "improve", pronunciation: "/imprúːv/", meaning: "改善する、上達する", example: "I want to improve my English.", translation: "私は英語を上達させたいです。" },
+          { word: "increase", pronunciation: "/inkríːs/", meaning: "増える、増やす", example: "The number may increase next year.", translation: "その数は来年増えるかもしれません。" },
+          { word: "provide", pronunciation: "/prəváid/", meaning: "提供する", example: "This service provides useful information.", translation: "このサービスは役立つ情報を提供します。" },
+          { word: "reduce", pronunciation: "/ridjúːs/", meaning: "減らす", example: "We need to reduce waste.", translation: "私たちはごみを減らす必要があります。" },
+          { word: "suggest", pronunciation: "/sədʒést/", meaning: "提案する", example: "I suggest taking a short break.", translation: "少し休憩することを提案します。" },
+          { word: "accept", pronunciation: "/əksépt/", meaning: "受け入れる", example: "She accepted the new idea.", translation: "彼女はその新しい考えを受け入れました。" },
+          { word: "affect", pronunciation: "/əfékt/", meaning: "影響を与える", example: "Weather can affect our plans.", translation: "天気は私たちの計画に影響を与えることがあります。" },
+          { word: "allow", pronunciation: "/əláu/", meaning: "許可する、可能にする", example: "This app allows you to study offline.", translation: "このアプリならオフラインで勉強できます。" },
+          { word: "describe", pronunciation: "/diskráib/", meaning: "説明する、描写する", example: "Can you describe the place?", translation: "その場所について説明できますか。" },
+          { word: "develop", pronunciation: "/divéləp/", meaning: "発展させる、開発する", example: "We need to develop a better system.", translation: "私たちはより良い仕組みを開発する必要があります。" },
+          { word: "discover", pronunciation: "/diskʌ́vər/", meaning: "発見する", example: "I discovered a useful website.", translation: "私は役立つウェブサイトを見つけました。" },
+          { word: "environment", pronunciation: "/inváiərənmənt/", meaning: "環境", example: "We should protect the environment.", translation: "私たちは環境を守るべきです。" },
+          { word: "experience", pronunciation: "/ikspíəriəns/", meaning: "経験、経験する", example: "Travel gives us new experiences.", translation: "旅行は私たちに新しい経験を与えてくれます。" },
+          { word: "prevent", pronunciation: "/privént/", meaning: "防ぐ", example: "This rule helps prevent accidents.", translation: "このルールは事故を防ぐのに役立ちます。" },
+          { word: "support", pronunciation: "/səpɔ́ːrt/", meaning: "支える、支持する", example: "Friends can support each other.", translation: "友達同士で支え合うことができます。" },
+          { word: "responsible", pronunciation: "/rispɑ́nsəbl/", meaning: "責任がある", example: "We are responsible for our choices.", translation: "私たちは自分の選択に責任があります。" },
+          { word: "available", pronunciation: "/əvéiləbl/", meaning: "利用できる、手に入る", example: "The service is available every day.", translation: "そのサービスは毎日利用できます。" },
+          { word: "possible", pronunciation: "/pɑ́səbl/", meaning: "可能な", example: "It is possible to learn step by step.", translation: "少しずつ学ぶことは可能です。" },
+          { word: "instead", pronunciation: "/instéd/", meaning: "その代わりに", example: "Let's walk instead of taking a taxi.", translation: "タクシーではなく歩きましょう。" }
+        ];
+
         const elements = {
           moods: document.querySelector("#moods"),
           today: document.querySelector("#today"),
@@ -576,6 +616,7 @@
           inputPronunciation: document.querySelector("#inputPronunciation"),
           inputExample: document.querySelector("#inputExample"),
           inputTranslation: document.querySelector("#inputTranslation"),
+          randomWord: document.querySelector("#randomWord"),
           saveWord: document.querySelector("#saveWord"),
           status: document.querySelector("#status")
         };
@@ -632,6 +673,21 @@
 
         function isCustomWord(word) {
           return typeof word.id === "string";
+        }
+
+        function fillRandomWord() {
+          const savedWords = new Set(customWords.map((item) => item.word.toLowerCase()));
+          const available = randomCandidates.filter((item) => !savedWords.has(item.word.toLowerCase()));
+          const pool = available.length ? available : randomCandidates;
+          const candidate = pool[Math.floor(Math.random() * pool.length)];
+          editingId = null;
+          elements.inputWord.value = candidate.word;
+          elements.inputMeaning.value = candidate.meaning;
+          elements.inputPronunciation.value = candidate.pronunciation;
+          elements.inputExample.value = candidate.example;
+          elements.inputTranslation.value = candidate.translation;
+          showStatus(`「${candidate.word}」をランダム入力しました。保存すると単語帳に追加されます。`, "success");
+          elements.inputWord.focus();
         }
 
         function renderMoods() {
@@ -743,6 +799,7 @@
           elements.formTitle.textContent = editingId ? "単語を修正" : "覚えたい単語を追加";
           elements.toggleForm.textContent = formOpen ? (editingId ? "修正をやめる" : "閉じる") : "＋ 単語を追加";
           elements.saveWord.textContent = editingId ? "変更を保存" : "この単語を保存";
+          elements.randomWord.hidden = Boolean(editingId);
           elements.form.classList.toggle("open", formOpen);
           renderAnswer(word);
           renderMoods();
@@ -781,6 +838,8 @@
           render();
           if (formOpen) setTimeout(() => elements.inputWord.focus(), 0);
         });
+
+        elements.randomWord.addEventListener("click", fillRandomWord);
 
         elements.editWord.addEventListener("click", () => {
           const current = getCurrentWord();
