@@ -222,9 +222,7 @@
         font-size: 9px;
         font-weight: 800;
       }
-      .word {
-        margin: auto 0 17px;
-      }
+      .word { margin: auto 0 17px; }
       .word-line {
         display: flex;
         align-items: center;
@@ -250,6 +248,7 @@
         cursor: pointer;
       }
       .speech-button:hover { background: #ffffff24; }
+      .speech-button:disabled, .actions button:disabled { opacity: .45; cursor: default; }
       .answer {
         min-height: 82px;
         padding: 16px;
@@ -276,18 +275,19 @@
       }
       .actions {
         display: grid;
-        grid-template-columns: 1fr 1.15fr;
-        gap: 9px;
+        grid-template-columns: 1fr 1fr 1.15fr;
+        gap: 8px;
         margin-top: 13px;
       }
       .actions button {
         min-height: 45px;
         border-radius: 999px;
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 800;
         cursor: pointer;
       }
       .secondary { border: 1px solid #ffffff4a; background: transparent; color: white; }
+      .learned-action { border: 1px solid #d7eadf; background: #edf7f1; color: #35634f; }
       .primary { border: 0; background: white; color: var(--purple-dark); }
       .word-manage {
         align-self: center;
@@ -296,22 +296,14 @@
         gap: 12px;
         margin-top: 11px;
       }
-      .edit-button, .delete-button {
+      .edit-button {
         padding: 5px 8px;
-        border: 0;
+        border: 1px solid #ffffff35;
+        border-radius: 999px;
         background: transparent;
         color: #ddd7f0;
         font-size: 9px;
         cursor: pointer;
-      }
-      .edit-button {
-        border: 1px solid #ffffff35;
-        border-radius: 999px;
-        text-decoration: none;
-      }
-      .delete-button {
-        text-decoration: underline;
-        text-underline-offset: 3px;
       }
       .translation {
         margin: 10px 0 0 !important;
@@ -321,20 +313,20 @@
         font-size: 10px !important;
         line-height: 1.6 !important;
       }
-      .add-panel {
+      .add-panel, .learned-panel {
         margin-top: 16px;
         padding: 24px 26px;
         border: 1px solid var(--line);
         border-radius: 20px;
         background: var(--paper);
       }
-      .add-heading {
+      .add-heading, .learned-heading {
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 18px;
       }
-      .add-heading p:last-child {
+      .add-heading p:last-child, .learned-heading p:last-child {
         margin: 7px 0 0;
         color: var(--muted);
         font-size: 10px;
@@ -406,6 +398,68 @@
         font-weight: 800;
         cursor: pointer;
       }
+      .learned-count {
+        flex: 0 0 auto;
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: #f2effb;
+        color: var(--purple-dark);
+        font-size: 10px;
+        font-weight: 800;
+      }
+      .learned-list {
+        display: grid;
+        gap: 9px;
+        margin-top: 18px;
+      }
+      .learned-empty {
+        margin: 18px 0 0;
+        padding: 16px;
+        border: 1px dashed var(--line);
+        border-radius: 13px;
+        color: var(--muted);
+        font-size: 10px;
+        line-height: 1.7;
+        text-align: center;
+      }
+      .learned-item {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 13px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: #fbfaf7;
+      }
+      .learned-copy { min-width: 0; }
+      .learned-copy strong {
+        display: block;
+        overflow-wrap: anywhere;
+        font: 600 17px Georgia, serif;
+      }
+      .learned-copy small {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 9px;
+        line-height: 1.5;
+      }
+      .learned-controls {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .restore-button, .purge-button {
+        min-height: 34px;
+        padding: 0 10px;
+        border-radius: 999px;
+        font-size: 9px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      .restore-button { border: 1px solid #cfc8e7; background: white; color: var(--purple-dark); }
+      .purge-button { border: 1px solid #ead3cf; background: #fff8f6; color: var(--error); }
       .status {
         min-height: 17px;
         margin: 14px 0 0;
@@ -445,12 +499,16 @@
         .moods { grid-template-columns: repeat(3, 1fr); gap: 6px; }
         .mood { grid-template-columns: 1fr; justify-items: center; padding: 9px 4px; text-align: center; }
         .word-card { min-height: 380px; padding: 22px 18px; }
-        .add-panel { padding: 21px 17px; }
-        .add-heading { align-items: flex-start; }
-        .add-heading h2 { font-size: 19px; }
+        .actions { grid-template-columns: 1fr 1fr; }
+        .actions .primary { grid-column: 1 / -1; }
+        .add-panel, .learned-panel { padding: 21px 17px; }
+        .add-heading, .learned-heading { align-items: flex-start; }
+        .add-heading h2, .learned-heading h2 { font-size: 19px; }
         .toggle-form { min-height: 39px; padding-inline: 12px; font-size: 10px; }
         form { grid-template-columns: 1fr; }
         .random-button, .save-button { grid-column: auto; }
+        .learned-item { grid-template-columns: 1fr; }
+        .learned-controls { justify-content: flex-start; }
         footer { justify-content: flex-start; flex-wrap: wrap; }
       }
     </style>
@@ -463,7 +521,7 @@
       </a>
       <div class="header-info">
         <span class="offline-badge">オフライン</span>
-        <span class="total-badge" id="total">全12語</span>
+        <span class="total-badge" id="total">学習中12語</span>
       </div>
     </header>
 
@@ -472,7 +530,7 @@
         <div>
           <p class="eyebrow">WELCOME BACK</p>
           <h1>今日も、<br><em>ここから。</em></h1>
-          <p class="hero-copy">通信がなくても使える、自分だけの英単語帳。<br>覚えたい単語を少しずつ追加できます。</p>
+          <p class="hero-copy">通信がなくても使える、自分だけの英単語帳。<br>覚えた単語は学習から外して、あとから戻すこともできます。</p>
         </div>
         <div class="return-mark" aria-hidden="true"><span>↩</span></div>
       </section>
@@ -502,11 +560,11 @@
           </div>
           <div class="actions">
             <button class="secondary" id="meaning" type="button">意味を見る</button>
+            <button class="learned-action" id="markLearned" type="button">✓ 覚えた</button>
             <button class="primary" id="next" type="button">次の単語 →</button>
           </div>
           <div class="word-manage" id="wordManage" hidden>
             <button class="edit-button" id="editWord" type="button">この単語を修正</button>
-            <button class="delete-button" id="deleteWord" type="button">削除</button>
           </div>
         </article>
       </section>
@@ -532,7 +590,20 @@
         <p class="status" id="status" aria-live="polite">自分で追加した単語：0語</p>
       </section>
 
-      <p class="note">追加した単語はこのHTMLを開いたブラウザに保存されます。<br>読み上げには端末の英語音声を使います。完全オフラインで聞くには、端末に英語音声をダウンロードしておいてください。</p>
+      <section class="learned-panel" id="learnedPanel" aria-labelledby="learned-title">
+        <div class="learned-heading">
+          <div>
+            <p class="kicker">LEARNED</p>
+            <h2 id="learned-title">覚えた単語</h2>
+            <p>通常の出題から外れます。必要になったら「もう一度学ぶ」で戻せます。</p>
+          </div>
+          <span class="learned-count" id="learnedCount">0語</span>
+        </div>
+        <div class="learned-list" id="learnedList"></div>
+        <p class="learned-empty" id="learnedEmpty">「✓ 覚えた」を押した単語が、ここにたまっていきます。</p>
+      </section>
+
+      <p class="note">追加した単語・覚えた状態は、このHTMLを開いたブラウザに保存されます。<br>読み上げには端末の英語音声を使います。</p>
     </main>
 
     <footer>
@@ -545,11 +616,15 @@
         "use strict";
 
         const STORAGE_KEY = "modori-eigo-custom-words-v1";
+        const LEARNED_KEY = "modori-eigo-learned-words-v1";
+        const DELETED_BUILTINS_KEY = "modori-eigo-deleted-builtins-v1";
+
         const moods = [
           { id: "good", label: "元気", note: "10語やってみる", count: 10 },
           { id: "okay", label: "ふつう", note: "5語だけ進める", count: 5 },
           { id: "tired", label: "疲れた", note: "1語だけ見る", count: 1 }
         ];
+
         const builtInWords = [
           { word: "accomplish", pronunciation: "/əkɑ́mpliʃ/", meaning: "達成する、成し遂げる", example: "We accomplished our goal.", translation: "私たちは目標を達成しました。" },
           { word: "approach", pronunciation: "/əpróutʃ/", meaning: "近づく、取り組み方", example: "We need a new approach.", translation: "私たちには新しい取り組み方が必要です。" },
@@ -601,12 +676,12 @@
           pronunciation: document.querySelector("#pronunciation"),
           answer: document.querySelector("#answer"),
           meaning: document.querySelector("#meaning"),
+          markLearned: document.querySelector("#markLearned"),
           speakWord: document.querySelector("#speakWord"),
           next: document.querySelector("#next"),
           customBadge: document.querySelector("#customBadge"),
           wordManage: document.querySelector("#wordManage"),
           editWord: document.querySelector("#editWord"),
-          deleteWord: document.querySelector("#deleteWord"),
           addPanel: document.querySelector("#addPanel"),
           formTitle: document.querySelector("#add-title"),
           toggleForm: document.querySelector("#toggleForm"),
@@ -618,7 +693,10 @@
           inputTranslation: document.querySelector("#inputTranslation"),
           randomWord: document.querySelector("#randomWord"),
           saveWord: document.querySelector("#saveWord"),
-          status: document.querySelector("#status")
+          status: document.querySelector("#status"),
+          learnedCount: document.querySelector("#learnedCount"),
+          learnedList: document.querySelector("#learnedList"),
+          learnedEmpty: document.querySelector("#learnedEmpty")
         };
 
         let mood = "okay";
@@ -627,6 +705,8 @@
         let formOpen = false;
         let editingId = null;
         let customWords = loadCustomWords();
+        let learnedKeys = loadStringSet(LEARNED_KEY);
+        let deletedBuiltInKeys = loadStringSet(DELETED_BUILTINS_KEY);
 
         function loadCustomWords() {
           try {
@@ -642,13 +722,29 @@
         function normalizeSavedWord(item) {
           if (!item || typeof item.id !== "string" || typeof item.word !== "string" ||
               typeof item.meaning !== "string" || typeof item.pronunciation !== "string" ||
-              typeof item.example !== "string") {
-            return null;
+              typeof item.example !== "string") return null;
+          return { ...item, translation: typeof item.translation === "string" ? item.translation : "" };
+        }
+
+        function loadStringSet(key) {
+          try {
+            const saved = localStorage.getItem(key);
+            if (!saved) return new Set();
+            const parsed = JSON.parse(saved);
+            return new Set(Array.isArray(parsed) ? parsed.filter((item) => typeof item === "string") : []);
+          } catch {
+            return new Set();
           }
-          return {
-            ...item,
-            translation: typeof item.translation === "string" ? item.translation : ""
-          };
+        }
+
+        function saveSet(key, set) {
+          try {
+            localStorage.setItem(key, JSON.stringify([...set]));
+            return true;
+          } catch {
+            showStatus("このブラウザでは状態を保存できませんでした。", "error");
+            return false;
+          }
         }
 
         function saveCustomWords() {
@@ -661,23 +757,42 @@
           }
         }
 
-        function getAllWords() {
-          return [...builtInWords, ...customWords];
-        }
-
-        function getCurrentWord() {
-          const allWords = getAllWords();
-          if (index >= allWords.length) index = Math.max(0, allWords.length - 1);
-          return allWords[index];
+        function getWordKey(word) {
+          return word && typeof word.id === "string"
+            ? `custom:${word.id}`
+            : `builtin:${String(word?.word || "").trim().toLowerCase()}`;
         }
 
         function isCustomWord(word) {
-          return typeof word.id === "string";
+          return Boolean(word && typeof word.id === "string");
+        }
+
+        function getAvailableBuiltIns() {
+          return builtInWords.filter((word) => !deletedBuiltInKeys.has(getWordKey(word)));
+        }
+
+        function getAllWords() {
+          return [...getAvailableBuiltIns(), ...customWords];
+        }
+
+        function getStudyWords() {
+          return getAllWords().filter((word) => !learnedKeys.has(getWordKey(word)));
+        }
+
+        function getLearnedWords() {
+          return getAllWords().filter((word) => learnedKeys.has(getWordKey(word)));
+        }
+
+        function getCurrentWord() {
+          const words = getStudyWords();
+          if (!words.length) return null;
+          if (index >= words.length) index = 0;
+          return words[index];
         }
 
         function fillRandomWord() {
-          const savedWords = new Set(customWords.map((item) => item.word.toLowerCase()));
-          const available = randomCandidates.filter((item) => !savedWords.has(item.word.toLowerCase()));
+          const alreadyKnown = new Set(getAllWords().map((item) => item.word.toLowerCase()));
+          const available = randomCandidates.filter((item) => !alreadyKnown.has(item.word.toLowerCase()));
           const pool = available.length ? available : randomCandidates;
           const candidate = pool[Math.floor(Math.random() * pool.length)];
           editingId = null;
@@ -719,6 +834,12 @@
 
         function renderAnswer(word) {
           elements.answer.replaceChildren();
+          if (!word) {
+            const done = document.createElement("p");
+            done.textContent = "学習中の単語はありません。覚えた単語から戻すか、新しい単語を追加してください。";
+            elements.answer.append(done);
+            return;
+          }
           if (!answerOpen) {
             const guide = document.createElement("p");
             guide.textContent = "まず英単語を見て、意味を考えてみましょう。";
@@ -750,6 +871,45 @@
           }
         }
 
+        function renderLearnedList() {
+          const learnedWords = getLearnedWords();
+          elements.learnedList.replaceChildren();
+          elements.learnedCount.textContent = `${learnedWords.length}語`;
+          elements.learnedEmpty.hidden = learnedWords.length > 0;
+
+          learnedWords.forEach((word) => {
+            const item = document.createElement("div");
+            item.className = "learned-item";
+
+            const copy = document.createElement("div");
+            copy.className = "learned-copy";
+            const name = document.createElement("strong");
+            name.textContent = word.word;
+            const detail = document.createElement("small");
+            detail.textContent = word.meaning;
+            copy.append(name, detail);
+
+            const controls = document.createElement("div");
+            controls.className = "learned-controls";
+
+            const restore = document.createElement("button");
+            restore.type = "button";
+            restore.className = "restore-button";
+            restore.textContent = "もう一度学ぶ";
+            restore.addEventListener("click", () => restoreWord(word));
+
+            const purge = document.createElement("button");
+            purge.type = "button";
+            purge.className = "purge-button";
+            purge.textContent = "完全に削除";
+            purge.addEventListener("click", () => purgeWord(word));
+
+            controls.append(restore, purge);
+            item.append(copy, controls);
+            elements.learnedList.append(item);
+          });
+        }
+
         function speakEnglish(text, label) {
           if (!text) {
             showStatus(`${label}が登録されていません。`, "error");
@@ -759,50 +919,21 @@
             showStatus("このブラウザは音声読み上げに対応していません。", "error");
             return;
           }
-
           window.speechSynthesis.cancel();
           const utterance = new SpeechSynthesisUtterance(text);
           utterance.lang = "en-US";
           utterance.rate = label === "単語" ? 0.78 : 0.88;
           utterance.pitch = 1;
-
           const voices = window.speechSynthesis.getVoices();
           const englishVoices = voices.filter((voice) => voice.lang.toLowerCase().startsWith("en"));
           utterance.voice =
             englishVoices.find((voice) => voice.localService && voice.lang.toLowerCase().startsWith("en-us")) ||
             englishVoices.find((voice) => voice.localService) ||
             englishVoices.find((voice) => voice.lang.toLowerCase().startsWith("en-us")) ||
-            englishVoices[0] ||
-            null;
-
-          utterance.onerror = () => {
-            showStatus("英語音声を再生できませんでした。端末の音声設定を確認してください。", "error");
-          };
+            englishVoices[0] || null;
+          utterance.onerror = () => showStatus("英語音声を再生できませんでした。端末の音声設定を確認してください。", "error");
           window.speechSynthesis.speak(utterance);
           showStatus(`${label}を読み上げています。`, "success");
-        }
-
-        function render() {
-          const allWords = getAllWords();
-          const word = getCurrentWord();
-          const selectedMood = moods.find((item) => item.id === mood);
-          const custom = isCustomWord(word);
-
-          elements.today.textContent = `今日は${selectedMood.count}語`;
-          elements.position.textContent = `${index + 1} / ${allWords.length}`;
-          elements.total.textContent = `全${allWords.length}語`;
-          elements.word.textContent = word.word;
-          elements.pronunciation.textContent = word.pronunciation || "発音は未登録";
-          elements.meaning.textContent = answerOpen ? "意味を隠す" : "意味を見る";
-          elements.customBadge.hidden = !custom;
-          elements.wordManage.hidden = !custom;
-          elements.formTitle.textContent = editingId ? "単語を修正" : "覚えたい単語を追加";
-          elements.toggleForm.textContent = formOpen ? (editingId ? "修正をやめる" : "閉じる") : "＋ 単語を追加";
-          elements.saveWord.textContent = editingId ? "変更を保存" : "この単語を保存";
-          elements.randomWord.hidden = Boolean(editingId);
-          elements.form.classList.toggle("open", formOpen);
-          renderAnswer(word);
-          renderMoods();
         }
 
         function showStatus(message, type = "") {
@@ -810,17 +941,110 @@
           elements.status.className = `status${type ? ` ${type}` : ""}`;
         }
 
+        function markCurrentLearned() {
+          const current = getCurrentWord();
+          if (!current) return;
+          const key = getWordKey(current);
+          learnedKeys.add(key);
+          if (!saveSet(LEARNED_KEY, learnedKeys)) {
+            learnedKeys.delete(key);
+            return;
+          }
+          answerOpen = false;
+          const remaining = getStudyWords();
+          if (index >= remaining.length) index = 0;
+          showStatus(`「${current.word}」を覚えた単語に移しました。`, "success");
+          render();
+        }
+
+        function restoreWord(word) {
+          const key = getWordKey(word);
+          learnedKeys.delete(key);
+          if (!saveSet(LEARNED_KEY, learnedKeys)) {
+            learnedKeys.add(key);
+            return;
+          }
+          const studyWords = getStudyWords();
+          const newIndex = studyWords.findIndex((item) => getWordKey(item) === key);
+          if (newIndex >= 0) index = newIndex;
+          answerOpen = false;
+          showStatus(`「${word.word}」を学習中に戻しました。`, "success");
+          render();
+        }
+
+        function purgeWord(word) {
+          if (!confirm(`「${word.word}」を完全に削除しますか？\nこの操作は元に戻せません。`)) return;
+          const key = getWordKey(word);
+
+          if (isCustomWord(word)) {
+            const previousWords = customWords;
+            customWords = customWords.filter((item) => item.id !== word.id);
+            if (!saveCustomWords()) {
+              customWords = previousWords;
+              return;
+            }
+          } else {
+            deletedBuiltInKeys.add(key);
+            if (!saveSet(DELETED_BUILTINS_KEY, deletedBuiltInKeys)) {
+              deletedBuiltInKeys.delete(key);
+              return;
+            }
+          }
+
+          learnedKeys.delete(key);
+          saveSet(LEARNED_KEY, learnedKeys);
+          const studyWords = getStudyWords();
+          if (index >= studyWords.length) index = 0;
+          showStatus(`「${word.word}」を完全に削除しました。`, "success");
+          render();
+        }
+
+        function render() {
+          const studyWords = getStudyWords();
+          const word = getCurrentWord();
+          const selectedMood = moods.find((item) => item.id === mood);
+          const custom = isCustomWord(word);
+          const hasWord = Boolean(word);
+
+          elements.today.textContent = hasWord ? `今日は${Math.min(selectedMood.count, studyWords.length)}語` : "今日はおしまい";
+          elements.position.textContent = hasWord ? `${index + 1} / ${studyWords.length}` : "0 / 0";
+          elements.total.textContent = `学習中${studyWords.length}語`;
+          elements.word.textContent = hasWord ? word.word : "All learned";
+          elements.pronunciation.textContent = hasWord ? (word.pronunciation || "発音は未登録") : "覚えた単語から戻すことができます";
+          elements.meaning.textContent = answerOpen ? "意味を隠す" : "意味を見る";
+          elements.customBadge.hidden = !custom;
+          elements.wordManage.hidden = !custom;
+          elements.speakWord.disabled = !hasWord;
+          elements.meaning.disabled = !hasWord;
+          elements.markLearned.disabled = !hasWord;
+          elements.next.disabled = !hasWord;
+          elements.formTitle.textContent = editingId ? "単語を修正" : "覚えたい単語を追加";
+          elements.toggleForm.textContent = formOpen ? (editingId ? "修正をやめる" : "閉じる") : "＋ 単語を追加";
+          elements.saveWord.textContent = editingId ? "変更を保存" : "この単語を保存";
+          elements.randomWord.hidden = Boolean(editingId);
+          elements.form.classList.toggle("open", formOpen);
+          renderAnswer(word);
+          renderMoods();
+          renderLearnedList();
+        }
+
         elements.meaning.addEventListener("click", () => {
+          if (!getCurrentWord()) return;
           answerOpen = !answerOpen;
           render();
         });
 
         elements.speakWord.addEventListener("click", () => {
-          speakEnglish(getCurrentWord().word, "単語");
+          const current = getCurrentWord();
+          if (current) speakEnglish(current.word, "単語");
         });
 
+        elements.markLearned.addEventListener("click", markCurrentLearned);
+
         elements.next.addEventListener("click", () => {
-          index = (index + 1) % getAllWords().length;
+          const words = getStudyWords();
+          if (!words.length) return;
+          index = (index + 1) % words.length;
           answerOpen = false;
           render();
         });
@@ -886,7 +1110,6 @@
               customWords = previousWords;
               return;
             }
-            index = builtInWords.length + customIndex;
             showStatus(`「${word}」の変更を保存しました。`, "success");
           } else {
             customWords.push(savedWord);
@@ -894,7 +1117,9 @@
               customWords.pop();
               return;
             }
-            index = builtInWords.length + customWords.length - 1;
+            const studyWords = getStudyWords();
+            const newIndex = studyWords.findIndex((item) => item.id === savedWord.id);
+            if (newIndex >= 0) index = newIndex;
             showStatus(`「${word}」を保存しました。`, "success");
           }
 
@@ -902,28 +1127,6 @@
           formOpen = false;
           editingId = null;
           elements.form.reset();
-          render();
-        });
-
-        elements.deleteWord.addEventListener("click", () => {
-          const current = getCurrentWord();
-          if (!isCustomWord(current)) return;
-          if (!confirm(`「${current.word}」を削除しますか？`)) return;
-
-          const previousWords = customWords;
-          customWords = customWords.filter((item) => item.id !== current.id);
-          if (!saveCustomWords()) {
-            customWords = previousWords;
-            return;
-          }
-          if (editingId === current.id) {
-            editingId = null;
-            formOpen = false;
-            elements.form.reset();
-          }
-          index = Math.max(0, Math.min(index - 1, getAllWords().length - 1));
-          answerOpen = false;
-          showStatus(`「${current.word}」を削除しました。`, "success");
           render();
         });
 
